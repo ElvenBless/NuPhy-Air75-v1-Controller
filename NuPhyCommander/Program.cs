@@ -1,87 +1,8 @@
-﻿using NuPhyCommander.Services;
+﻿using NuPhyCommander.Models;
+using NuPhyCommander.Models.Enums;
+using NuPhyCommander.Services;
 
 namespace NuPhyCommander;
-
-public enum PixelOrder
-{
-    GB0R,
-    BG0R,
-    GR0B,
-    BR0G,
-}
-
-public enum Air75Mode : byte
-{
-    None = 0,
-    FixedOn,
-    Respire,
-    Rainbow,
-    FlashAway,
-    Raindrops,
-    RainbowWheel,
-    RipplesShining,
-    StarsTwinkle,
-    ShadowDisappear,
-    RetroSnake,
-    NeonStream,
-    Reaction,
-    SineWave,
-    RetinueScanning,
-    RotatingWindmill,
-    ColorfulWaterfall,
-    Blossoming,
-    RotatingStorm,
-    Collision,
-    Perfect,
-    GameMode,
-    OFF
-}
-
-public enum BrightnesMode : byte
-{
-    None = 0x20,
-    One = 0x21,
-    Two = 0x22,
-    Three = 0x23,
-    Four = 0x24,
-}
-
-public enum DebounceMode : byte
-{
-    None = 0x20,
-    One = 0x21,
-    Two = 0x22,
-    Three = 0x23,
-    Four = 0x24,
-    Fifts = 0x25,
-}
-
-public enum SpeedMode : byte
-{
-    None = 0x00,
-    One = 0x13,
-    Two = 0x23,
-    Three = 0x33,
-    Four = 0x43,
-}
-
-public sealed class ModeSpec
-{
-    public PixelOrder Order { get; init; }
-    public bool SupportsUniformColor { get; init; } = true;
-    public bool SupportsBrightness { get; init; } = true;
-    public bool SupportsSpeed { get; init; } = true;
-    public bool SupportsDebounce { get; init; } = true;
-}
-
-public static class Air75Modes
-{
-    public static readonly Dictionary<Air75Mode, ModeSpec> Map = new()
-    {
-        { Air75Mode.FixedOn, new ModeSpec { Order = PixelOrder.BG0R, SupportsSpeed=false } },
-        { Air75Mode.NeonStream,   new ModeSpec { Order = PixelOrder.BR0G } },
-    };
-}
 
 class Program
 {
@@ -94,16 +15,16 @@ class Program
 
         while (true)
         {
-            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildSingleDynamicColor(0x00, 0x00, 0xFF, Air75Modes.Map[Air75Mode.NeonStream].Order), out err2);
-            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildMode(Air75Mode.NeonStream, BrightnesMode.Four, DebounceMode.Three, SpeedMode.One), out err2);
+            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildColor(0x00, 0x00, 0xFF, Air75Modes.Map[Air75Mode.NeonStream].Order), out err2);
+            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildMode(Air75Mode.NeonStream, BrightnesMode.Fourth, DebounceMode.Third, SpeedMode.First), out err2);
             Task.Delay(3000).GetAwaiter().GetResult();
-            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildSingleDynamicColor(0x00, 0xFF, 0x00, Air75Modes.Map[Air75Mode.NeonStream].Order), out err2);
-            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildMode(Air75Mode.NeonStream, BrightnesMode.Four, DebounceMode.Three, SpeedMode.Four), out err2);
+            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildColor(0x00, 0xFF, 0x00, Air75Modes.Map[Air75Mode.NeonStream].Order), out err2);
+            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildMode(Air75Mode.NeonStream, BrightnesMode.Fourth, DebounceMode.Third, SpeedMode.Fourth), out err2);
             Task.Delay(3000).GetAwaiter().GetResult();
         }
     }
 
-    public static byte[] BuildSingleDynamicColor(byte r, byte g, byte b, PixelOrder pixelOrder, int ledCount = 250)
+    public static byte[] BuildColor(byte r, byte g, byte b, PixelOrder pixelOrder, int ledCount = 250)
     {
         if (ledCount < 0) ledCount = 0;
 
