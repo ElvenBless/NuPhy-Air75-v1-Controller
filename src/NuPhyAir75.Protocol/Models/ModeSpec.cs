@@ -1,6 +1,6 @@
-﻿using NuPhyCommander.Models.Enums;
+﻿using NuPhyAir75.Protocol.Models.Enums;
 
-namespace NuPhyCommander.Models;
+namespace NuPhyAir75.Protocol.Models;
 
 public sealed record ModeSpec(PixelOrder Order)
 {

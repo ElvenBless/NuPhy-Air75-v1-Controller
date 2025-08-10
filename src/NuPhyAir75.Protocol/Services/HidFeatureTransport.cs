@@ -1,13 +1,13 @@
-﻿using NuPhyCommander.Interop;
-using NuPhyCommander.Interop.Structs;
+﻿using NuPhyAir75.Protocol.Interop;
+using NuPhyAir75.Protocol.Interop.Structs;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace NuPhyCommander.Services
+namespace NuPhyAir75.Protocol.Services
 {
-    internal static class HidFeatureReportSender
+    public sealed class HidFeatureTransport(UsbInfo _usbInfo)
     {
-        internal static bool TrySendFeatureReport(ushort vid, ushort pid, byte[] reportStartingWithId, out string error)
+        public bool TrySendFeatureReport(byte[] reportStartingWithId, out string error)
         {
             error = null;
 
@@ -60,7 +60,7 @@ namespace NuPhyCommander.Services
                     var attr = new HIDD_ATTRIBUTES { Size = Marshal.SizeOf<HIDD_ATTRIBUTES>() };
                     if (!HidNativeMethods.HidD_GetAttributes(handle, ref attr))
                         continue;
-                    if (attr.VendorID != vid || attr.ProductID != pid)
+                    if (attr.VendorID != _usbInfo.Vid || attr.ProductID != _usbInfo.Pid)
                         continue;
 
                     if (!HidNativeMethods.HidD_GetPreparsedData(handle, out nint ppd))

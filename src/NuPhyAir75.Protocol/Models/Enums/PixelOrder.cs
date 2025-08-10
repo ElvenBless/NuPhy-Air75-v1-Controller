@@ -1,4 +1,4 @@
-﻿namespace NuPhyCommander.Models.Enums;
+﻿namespace NuPhyAir75.Protocol.Models.Enums;
 
 public enum PixelOrder
 {

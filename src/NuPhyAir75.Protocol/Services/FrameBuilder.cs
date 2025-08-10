@@ -1,29 +1,9 @@
-﻿using NuPhyCommander.Models;
-using NuPhyCommander.Models.Enums;
-using NuPhyCommander.Services;
+﻿using NuPhyAir75.Protocol.Models.Enums;
 
-namespace NuPhyCommander;
+namespace NuPhyAir75.Protocol.Services;
 
-class Program
+public class FrameBuilder
 {
-    private const ushort TARGET_VID = 0x05AC;
-    private const ushort TARGET_PID = 0x024F;
-
-    static void Main()
-    {
-        string err2 = string.Empty;
-
-        while (true)
-        {
-            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildColor(0x00, 0x00, 0xFF, Air75Modes.Map[Air75Mode.NeonStream].Order), out err2);
-            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildMode(Air75Mode.NeonStream, BrightnesMode.Fourth, DebounceMode.Third, SpeedMode.First), out err2);
-            Task.Delay(3000).GetAwaiter().GetResult();
-            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildColor(0x00, 0xFF, 0x00, Air75Modes.Map[Air75Mode.NeonStream].Order), out err2);
-            HidFeatureReportSender.TrySendFeatureReport(TARGET_VID, TARGET_PID, BuildMode(Air75Mode.NeonStream, BrightnesMode.Fourth, DebounceMode.Third, SpeedMode.Fourth), out err2);
-            Task.Delay(3000).GetAwaiter().GetResult();
-        }
-    }
-
     public static byte[] BuildColor(byte r, byte g, byte b, PixelOrder pixelOrder, int ledCount = 250)
     {
         if (ledCount < 0) ledCount = 0;
@@ -142,4 +122,5 @@ class Program
 
         return frame;
     }
+
 }
