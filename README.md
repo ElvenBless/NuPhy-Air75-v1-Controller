@@ -1,63 +1,47 @@
-# NuPhy Air75 Controller
+# NuPhy Air75 v1 Controller
 
-Reverse-engineering and implementation of the NuPhy Air75 v1 keyboard control protocol.  
-A C# (WinUI 3) application to configure RGB lighting, modes, brightness, speed, and other firmware parameters without vendor software.
+A reverse-engineered controller and protocol parser for the NuPhy Air75 v1 mechanical keyboard.  
+Allows full control over lighting modes, colors, brightness, speed, debounce, and more — all without proprietary software.
 
----
+## Features
 
-## ✨ Features
+- Change and customize all **17 lighting modes**
+- Adjust **brightness**, **mode speed**, and **debounce**
+- Support for both **static** and **dynamic** color orders
+- Send HID feature reports directly without vendor drivers
+- Plan to fully parse the NuPhy Air75 v1 protocol
+- WinUI 3 UI planned for easy control
 
-- Change RGB lighting colors and effects.
-- Adjust brightness and animation speed.
-- Control mode-specific settings (static, neon, wave, etc.).
-- Toggle and configure advanced options such as debounce.
-- Works without installing any vendor drivers — uses standard HID.
+## Technical Details
 
----
+The program uses standard Windows HID API calls (`hid.dll`, `setupapi.dll`) via P/Invoke.  
+It communicates directly with the keyboard’s HID interface (Feature Reports).  
+No custom drivers or vendor software are required.
 
-## 🛠 Technical details
+### Color Byte Order
+Depending on the mode, the pixel color bytes may be in different orders:
+- **Neon/Dynamic modes** → `G, B, reserved, R`
+- **Static mode** → `B, G, reserved, R`
 
-- Written in **C#** with **WinUI 3**.
-- Communicates with the keyboard via **HID feature reports**.
-- Fully documented byte structure for color frames.
-- Supports sending raw HID packets to replicate and extend vendor software capabilities.
+### Frame Structure (Static Color Example)
+```
+[ G ][ B ][ 00 ][ R ] x 251 pixels + [ 16 zero bytes padding ]
+```
+The first byte of the HID report is always the **Report ID** (0x06).
 
----
+## Planned Roadmap
 
-## 📋 Current protocol understanding
+- [ ] Reverse-engineer all remaining HID commands
+- [ ] Implement profile saving/loading
+- [ ] WinUI 3 control panel for keyboard settings
+- [ ] Cross-platform support via .NET MAUI
 
-- **17 lighting modes** mapped.
-- Two known color byte orders depending on mode:
-  - `G, B, 0x00, R` (neon modes)
-  - `B, G, 0x00, R` (static modes)
-- Brightness and speed control bytes identified.
-- Debounce parameter located but usage TBD.
+## Repository
 
----
-
-## 🚧 Roadmap
-
-- [ ] Full mapping of all protocol commands.
-- [ ] Add per-key lighting editing.
-- [ ] Export/import profiles.
-- [ ] Cross-platform support (via .NET MAUI or Avalonia).
-- [ ] Complete documentation of the protocol for the community.
+GitHub: [NuPhy-Air75-v1-Controller](https://github.com/ElvenBless/NuPhy-Air75-v1-Controller)
 
 ---
 
-## 📦 Build
-
-1. Install **.NET 9 SDK**.
-2. Clone the repository:
-   ```sh
-   git clone https://github.com/<your-username>/NuPhyAir75Controller.git
-    ```
-3. Open the solution in Visual Studio 2022.
-4. Build and run the WinUI project.
----
-
-## ⚠ Disclaimer
-
-This project is not affiliated with or endorsed by NuPhy.
-Use at your own risk — incorrect commands may cause the keyboard to reset or behave unexpectedly.
----
+### Disclaimer
+This project is not affiliated with NuPhy.  
+Use at your own risk — sending incorrect HID commands may cause the keyboard to behave unexpectedly.
